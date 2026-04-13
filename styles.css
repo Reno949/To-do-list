@@ -1,129 +1,477 @@
-/* Små forklaringer: variablene nedenfor styrer farger, skygger og bevegelse i UI.
-  Kommentar her er kun informativ og påvirker ikke stilene. */
-:root{
-  --bg-1: #f6f3ef;
-  --bg-2: #efe8df;
-  --panel: #fffefb;
-  --ink: #171412;
-  --muted: #6f6556;
-  --accent: #d95b2a;
-  --accent-2: #ff8a4b;
-  --glass: rgba(255,255,255,0.6);
-  --border: rgba(20,20,20,0.06);
-  --card-shadow: 0 10px 30px rgba(17,17,17,0.08);
-  --glass-shadow: 0 6px 24px rgba(17,17,17,0.08);
+/* ── Fonter ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+/* ── Reset og globale variabler ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --acc: #c0166a;   /* rosa/magenta aksent */
+  --acc2: #7b2ff7;  /* lilla aksent */
 }
 
-@media (prefers-reduced-motion: no-preference){
-  :root{ --motion: 0.18s; }
-}
-
-*{box-sizing:border-box;margin:0;padding:0}
-
-html,body{height:100%}
-body{
-  font-family: 'DM Mono', monospace;
-  color:var(--ink);
-  background: linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* Header */
-header{
-  display:flex;align-items:baseline;gap:18px;padding:26px 48px;
-  background: linear-gradient(90deg, rgba(23,20,18,0.96) 0%, rgba(34,31,28,0.94) 100%);
+/* ── Bakgrunn med lilla gradient ── */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #2d0764;
   color: #fff;
-  box-shadow: 0 4px 18px rgba(17,17,17,0.12);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
-header h1{font-family:'Instrument Serif',serif;font-size:2.1rem;font-style:italic}
-header span{font-size:0.72rem;opacity:0.5;letter-spacing:0.14em;text-transform:uppercase}
 
-/* Layout */
-.layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 96px)}
-
-/* Sidebar - glass card */
-.sidebar{
-  padding:28px 22px;display:flex;flex-direction:column;gap:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  backdrop-filter: blur(6px) saturate(120%);
-  color:#fff;border-right:1px solid rgba(255,255,255,0.03);
+/* ── Fargerik radial-gradient over hele siden ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 50%, #7b2ff7, #2d0764 55%),
+    radial-gradient(ellipse at 20% 80%, #c0166a, transparent 50%);
+  z-index: 0;
+  pointer-events: none;
 }
-.sidebar-label{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;opacity:0.6;padding:18px 8px 6px}
 
-.nav-btn{background:transparent;border:0;color:inherit;font-size:0.92rem;padding:10px 12px;text-align:left;cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:12px;transition:all var(--motion) ease}
-.nav-btn .icon{font-size:1.05rem}
-.nav-btn:hover{transform:translateX(6px);opacity:0.95}
-.nav-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 6px 18px rgba(217,91,42,0.18);color:#fff}
-
-/* Main */
-main{padding:44px;overflow:auto}
-.view{display:none}
-.view.active{display:block}
-.view-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.view-title{font-family:'Instrument Serif',serif;font-size:1.9rem;font-style:italic}
-
-/* Cards grid */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px}
-.card{
-  background:var(--panel);border-radius:12px;padding:22px;border:1px solid rgba(10,10,10,0.04);
-  box-shadow:var(--card-shadow);position:relative;transition:transform var(--motion),box-shadow var(--motion);
+/* ── Dekorativ glansball øverst til høyre ── */
+body::after {
+  content: '';
+  position: fixed;
+  width: 220px;
+  height: 220px;
+  top: 8%;
+  right: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #7ee8ff, #4a2adb 50%, #1a0550);
+  box-shadow: 0 0 60px #4a2adb88;
+  z-index: 0;
+  pointer-events: none;
 }
-.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(17,17,17,0.12)}
-@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.card{animation:cardIn 0.36s ease both}
 
-.card-date{font-size:0.72rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px}
-.card h3{font-family:'Instrument Serif',serif;font-size:1.18rem;margin-bottom:10px}
-.card p{font-size:0.92rem;color:var(--muted);line-height:1.6;white-space:pre-wrap}
+/* ── Header-stripe øverst ── */
+header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 22px 40px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-.delete-btn{position:absolute;top:12px;right:12px;background:transparent;border:0;color:var(--muted);font-size:1rem;cursor:pointer;padding:6px;border-radius:6px}
-.delete-btn:hover{color:var(--accent);background:rgba(217,91,42,0.06)}
+/* ── Appens navn i headeren ── */
+header h1 {
+  font-weight: 900;
+  font-size: 1.4rem;
+  letter-spacing: -0.03em;
+}
 
-/* Task list styling */
-.task-list{list-style:none;margin-top:10px;padding:0}
-.task-list li{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:0.95rem;border-bottom:1px solid rgba(0,0,0,0.02);cursor:pointer;transition:color var(--motion)}
-.task-list li.done{color:var(--muted);text-decoration:line-through}
-.task-check{width:18px;height:18px;border:2px solid rgba(0,0,0,0.06);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.75rem}
-.task-list li.done .task-check{background:var(--accent);border-color:var(--accent);color:#fff}
-.task-progress{font-size:0.72rem;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.03)}
+/* ── Versjonsnummer ved siden av tittelen ── */
+header span {
+  font-size: 0.7rem;
+  opacity: 0.4;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
 
-/* Forms */
-.form-panel{max-width:620px}
-.form-group{margin-bottom:20px}
-label{display:block;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-input[type="text"],textarea{width:100%;background:linear-gradient(180deg,#fff,#fbfbfb);border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:0.95rem;color:var(--ink);outline:none;transition:box-shadow var(--motion),border-color var(--motion)}
-input[type="text"]:focus,textarea:focus{box-shadow:0 6px 22px rgba(217,91,42,0.08);border-color:var(--accent)}
-textarea{min-height:140px;resize:vertical}
+/* ── To-kolonne layout: sidebar + main ── */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 70px);
+  position: relative;
+  z-index: 10;
+}
 
-.task-input-row{display:flex;gap:10px;margin-bottom:8px}
-.task-input-row input{flex:1}
-.task-input-row button{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-family:'DM Mono',monospace;transition:transform var(--motion),background var(--motion)}
-.task-input-row button:hover{transform:translateY(-3px);background:var(--accent)}
+/* ── Venstre sidefelt med glass-effekt ── */
+.sidebar {
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
 
-.task-draft-list{list-style:none}
-.task-draft-list li{display:flex;align-items:center;justify-content:space-between;font-size:0.95rem;padding:8px 12px;background:var(--panel);border-radius:8px;border:1px solid rgba(0,0,0,0.04);margin-bottom:8px}
-.task-draft-list li button{background:transparent;border:0;color:var(--muted);cursor:pointer}
-.task-draft-list li button:hover{color:var(--accent)}
+/* ── Kategori-etikett i sidebaren (f.eks. "Vis", "Opprett") ── */
+.sidebar-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.4;
+  padding: 16px 10px 6px;
+}
 
-.submit-btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;border:0;border-radius:12px;padding:12px 26px;font-family:'DM Mono',monospace;font-size:0.95rem;cursor:pointer;box-shadow:0 10px 24px rgba(217,91,42,0.12);transition:transform var(--motion)}
-.submit-btn:hover{transform:translateY(-3px)}
-.submit-btn:disabled{opacity:0.6;cursor:not-allowed}
+/* ── Navigasjonsknapper i sidebaren ── */
+.nav-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  opacity: 0.6;
+  transition: 0.15s;
+}
 
-/* Toast */
-#toast{position:fixed;bottom:26px;right:26px;background:rgba(23,20,18,0.96);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;transform:translateY(8px);transition:all 220ms;pointer-events:none;z-index:120}
-#toast.show{opacity:1;transform:none}
-#toast.error{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+/* ── Hover: lyser opp og forskyves litt ── */
+.nav-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
+}
 
-/* Loading */
-.loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:0.95rem;padding:40px 0}
-.spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,0.06);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── Aktiv knapp får gradient-bakgrunn ── */
+.nav-btn.active {
+  opacity: 1;
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  box-shadow: 0 4px 16px #c0166a55;
+}
 
-/* Responsive tweaks */
-@media (max-width:880px){
-  .layout{grid-template-columns:1fr;}
-  .sidebar{display:flex;flex-direction:row;gap:8px;padding:14px;overflow:auto}
-  header{padding:18px}
-  main{padding:22px}
+/* ── Hovedinnhold til høyre for sidebaren ── */
+main {
+  padding: 36px 40px;
+  overflow: auto;
+}
+
+/* ── Skjuler alle views som standard ── */
+.view { display: none; }
+
+/* ── Viser kun den aktive viewen ── */
+.view.active { display: block; }
+
+/* ── Topplinje i hvert view med tittel og knapp ── */
+.view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Stor tittel øverst i viewen ── */
+.view-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+/* ── Rutenett av kort ── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 18px;
+}
+
+/* ── Hvert notat- eller todo-kort ── */
+.card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  position: relative;
+  transition: 0.15s;
+  animation: cardIn 0.3s ease both;
+}
+
+/* ── Kort løfter seg litt ved hover ── */
+.card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+/* ── Kortene fader inn fra bunnen når de vises ── */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Dato øverst i kortet ── */
+.card-date {
+  font-size: 0.68rem;
+  opacity: 0.45;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* ── Korttittel ── */
+.card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* ── Innhold / brødtekst i kortet ── */
+.card p {
+  font-size: 0.82rem;
+  opacity: 0.65;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+/* ── Slett-knapp øverst i høyre hjørne av kort ── */
+.delete-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: 0.15s;
+}
+
+/* ── Slett-knapp blir rosa ved hover ── */
+.delete-btn:hover { color: #ff4d8d; }
+
+/* ── Liste over oppgaver i et todo-kort ── */
+.task-list {
+  list-style: none;
+  margin-top: 10px;
+}
+
+/* ── Én oppgave-rad ── */
+.task-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+/* ── Fullført oppgave er nedtonet og streket over ── */
+.task-list li.done {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+/* ── Avkrysningsboks til venstre for oppgaveteksten ── */
+.task-check {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* ── Fullført oppgave får fylt boks i aksent-farge ── */
+.task-list li.done .task-check {
+  background: var(--acc);
+  border-color: var(--acc);
+}
+
+/* ── Skjemaet for å opprette nytt notat eller liste ── */
+.form-panel { max-width: 580px; }
+
+/* ── Avstand mellom hvert skjemafelt ── */
+.form-group { margin-bottom: 18px; }
+
+/* ── Etikett over hvert inputfelt ── */
+label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 6px;
+}
+
+/* ── Tekstfelt og flerfeltsinput ── */
+input[type="text"], textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: 0.15s;
+}
+
+/* ── Fokus-ring i aksent-farge ── */
+input[type="text"]:focus, textarea:focus {
+  border-color: var(--acc);
+  box-shadow: 0 0 0 3px #c0166a33;
+}
+
+/* ── Plassholder-tekst er halvgjennomsiktig ── */
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Textarea er høyere og kan strekkes vertikalt ── */
+textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+/* ── Rad med inputfelt + "Legg til"-knapp for oppgaver ── */
+.task-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* ── Inputfeltet tar all tilgjengelig bredde ── */
+.task-input-row input { flex: 1; }
+
+/* ── Knapp for å legge til en oppgave i utkastet ── */
+.task-input-row button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  transition: 0.15s;
+  white-space: nowrap;
+}
+
+/* ── Knapp lyser opp i aksent-farge ved hover ── */
+.task-input-row button:hover {
+  background: var(--acc);
+  border-color: var(--acc);
+}
+
+/* ── Liste over oppgaver i utkastet (før lagring) ── */
+.task-draft-list { list-style: none; }
+
+/* ── Én rad i utkastlisten ── */
+.task-draft-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+/* ── Fjern-knapp inne i utkastet ── */
+.task-draft-list li button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+}
+
+/* ── Fjern-knapp blir rosa ved hover ── */
+.task-draft-list li button:hover { color: #ff4d8d; }
+
+/* ── Lagreknapp med gradient og skygge ── */
+.submit-btn {
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 11px 26px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px #c0166a55;
+  transition: 0.15s;
+}
+
+/* ── Knapp løfter seg ved hover ── */
+.submit-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+}
+
+/* ── Toast-melding nede til høyre (f.eks. "Lagret!") ── */
+#toast {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  background: rgba(20, 10, 40, 0.95);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: 0.2s;
+  pointer-events: none;
+  z-index: 120;
+  font-size: 0.82rem;
+}
+
+/* ── Toast vises med klassen .show ── */
+#toast.show {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Feil-toast får gradient-bakgrunn ── */
+#toast.error {
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+}
+
+/* ── Lasteindikator mens data hentes ── */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.5;
+  font-size: 0.85rem;
+  padding: 40px 0;
+}
+
+/* ── Snurrende sirkel ved siden av "Laster..."-teksten ── */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--acc);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Tom tilstand når ingen notater/lister finnes ── */
+.empty-state {
+  opacity: 0.4;
+  font-size: 0.9rem;
+  padding: 40px 0;
+  line-height: 2;
+}
+
+/* ── Stor tekst øverst i tom-tilstanden ── */
+.empty-state .big {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* ── Mobilvisning: én kolonne i stedet for to ── */
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { flex-direction: row; flex-wrap: wrap; padding: 12px; }
+  .sidebar-label { padding: 6px 8px 2px; width: 100%; }
+  main { padding: 22px; }
+  header { padding: 16px 22px; }
 }

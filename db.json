@@ -1,4 +1,24 @@
 {
-  "notes": [],
-  "todos": [2]
+  "notes": [
+    {
+      "id": "mnxj8gegbn8q",
+      "title": "f21",
+      "content": "f31",
+      "createdAt": "2026-04-13T18:34:54.856Z"
+    }
+  ],
+  "todos": [
+    {
+      "id": "mnxj78q4mx80",
+      "title": "hhh",
+      "tasks": [
+        {
+          "id": "mnxj78q4ig88",
+          "text": "ahh",
+          "completed": false
+        }
+      ],
+      "createdAt": "2026-04-13T18:33:58.252Z"
+    }
+  ]
 }
