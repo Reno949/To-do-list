@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notatapp</title>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,21 +16,15 @@
 
 <div class="layout">
   <nav class="sidebar">
+
     <div class="sidebar-label">Vis</div>
-    <button class="nav-btn active" onclick="showView('notes-list')" id="nav-notes-list">
-      Alle notater
-    </button>
-    <button class="nav-btn" onclick="showView('todos-list')" id="nav-todos-list">
-      Alle lister
-    </button>
+    <button class="nav-btn active" onclick="showView('notes-list')" id="nav-notes-list">Alle notater</button>
+    <button class="nav-btn" onclick="showView('todos-list')" id="nav-todos-list">Alle lister</button>
 
     <div class="sidebar-label">Opprett</div>
-    <button class="nav-btn" onclick="showView('new-note')" id="nav-new-note">
-      Nytt notat
-    </button>
-    <button class="nav-btn" onclick="showView('new-todo')" id="nav-new-todo">
-      Ny todo-liste
-    </button>
+    <button class="nav-btn" onclick="showView('new-note')" id="nav-new-note">Nytt notat</button>
+    <button class="nav-btn" onclick="showView('new-todo')" id="nav-new-todo">Ny todo-liste</button>
+
   </nav>
 
   <main>
@@ -38,20 +32,20 @@
     <div class="view active" id="view-notes-list">
       <div class="view-header">
         <span class="view-title">Tekstnotater</span>
-  <button class="submit-btn" onclick="loadNotes()">Oppdater</button>
+        <button class="submit-btn" onclick="loadNotes()">Oppdater</button>
       </div>
       <div class="cards-grid" id="notes-container">
-        <div class="loading"><div class="spinner"></div> Laster notater…</div>
+        <div class="loading"><div class="spinner"></div> Laster notater...</div>
       </div>
     </div>
 
     <div class="view" id="view-todos-list">
       <div class="view-header">
         <span class="view-title">Todo-lister</span>
-  <button class="submit-btn" onclick="loadTodos()">Oppdater</button>
+        <button class="submit-btn" onclick="loadTodos()">Oppdater</button>
       </div>
       <div class="cards-grid" id="todos-container">
-        <div class="loading"><div class="spinner"></div> Laster todo-lister…</div>
+        <div class="loading"><div class="spinner"></div> Laster todo-lister...</div>
       </div>
     </div>
 
@@ -60,11 +54,11 @@
       <div class="form-panel">
         <div class="form-group">
           <label for="note-title">Tittel</label>
-          <input id="note-title" type="text" placeholder="Skriv tittel her…">
+          <input id="note-title" type="text" placeholder="Skriv tittel her...">
         </div>
         <div class="form-group">
           <label for="note-content">Innhold</label>
-          <textarea id="note-content" placeholder="Skriv notatet…"></textarea>
+          <textarea id="note-content" placeholder="Skriv notatet..."></textarea>
         </div>
         <button class="submit-btn" id="create-note">Lagre notat</button>
       </div>
@@ -75,12 +69,12 @@
       <div class="form-panel">
         <div class="form-group">
           <label for="todo-title">Tittel</label>
-          <input id="todo-title" type="text" placeholder="Navn på liste…">
+          <input id="todo-title" type="text" placeholder="Navn på liste...">
         </div>
         <div class="form-group">
           <label>Oppgaver</label>
           <div class="task-input-row">
-            <input id="task-input" type="text" placeholder="Ny oppgave…">
+            <input id="task-input" type="text" placeholder="Ny oppgave...">
             <button id="add-task">Legg til</button>
           </div>
           <ul class="task-draft-list" id="draft"></ul>
@@ -95,127 +89,125 @@
 <div id="toast"></div>
 
 <script>
-// Enkel wrapper for API-kall. Returnerer alltid parsed JSON fra /api/*
+
+// henter JSON fra APIet
 const api = (path, opts) => fetch('/api' + path, opts).then(r => r.json());
 
-/*
-  Kort forklaring: filen inneholder to lag av funksjoner:
-  1) DOM-manipulasjon / visningslogikk (showView, initNav)
-  2) Nettverkskall mot /api/* (loadNotes, loadTodos, create/delete)
-  Kommentarer nedenfor markerer hvor de viktigste delene er.
-*/
-
-// Bytt syn (view). Holder også nav-knapper synkronisert.
-// - Fjerner 'active' fra alle .view-elementer
-// - Legger til 'active' på valgt view-element
-// - Oppdaterer nav-knappens aktive-klasse
-// Merknad: manipulerer kun DOM-klasser; ingen nettverkskall her.
-function showView(viewId){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+viewId)?.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const map = { 'notes-list':'nav-notes-list','todos-list':'nav-todos-list','new-note':'nav-new-note','new-todo':'nav-new-todo' };
-  const btn = document.getElementById(map[viewId]); if(btn) btn.classList.add('active');
+// bytter hvilken side som vises
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewId)?.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const map = { 'notes-list': 'nav-notes-list', 'todos-list': 'nav-todos-list', 'new-note': 'nav-new-note', 'new-todo': 'nav-new-todo' };
+  document.getElementById(map[viewId])?.classList.add('active');
 }
 
-// Hent og vis notater fra serveren
-// - viser en loading-indikator
-// - henter data fra /api/notes
-// - viser tom-tilstand hvis listen er tom
-// - bruker escapeHtml for å unngå at bruker-tekst injiserer HTML
-async function loadNotes(){
-  const container = document.getElementById('notes-container');
-  // Vis loading-indikator mens vi henter data
-  container.innerHTML = '<div class="loading"><div class="spinner"></div> Laster notater…</div>';
-  try{
+// henter notater og viser dem
+async function loadNotes() {
+  const c = document.getElementById('notes-container');
+  c.innerHTML = '<div class="loading"><div class="spinner"></div> Laster notater...</div>';
+  try {
     const notes = await api('/notes');
-    if(!notes.length){ container.innerHTML = '<div class="empty-state"><span class="big">Ingen notater</span>Lag et nytt notat for å komme i gang.</div>'; return; }
-    container.innerHTML = '';
-    for(const n of notes){
-      const el = document.createElement('article'); el.className='card';
-  el.innerHTML = `<div class="card-date">${new Date(n.createdAt).toLocaleString()}</div><h3>${escapeHtml(n.title)}</h3><p>${escapeHtml(n.content)}</p><button class="delete-btn" onclick="deleteNote('${n.id}')">Slett</button>`;
-      container.appendChild(el);
+    if (!notes.length) { c.innerHTML = '<div class="empty-state"><span class="big">Ingen notater</span>Lag et nytt notat for å komme i gang.</div>'; return; }
+    c.innerHTML = '';
+    for (const n of notes) {
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.innerHTML = `<div class="card-date">${new Date(n.createdAt).toLocaleString()}</div><h3>${esc(n.title)}</h3><p>${esc(n.content)}</p><button class="delete-btn" onclick="deleteNote('${n.id}')">Slett</button>`;
+      c.appendChild(el);
     }
-  }catch(e){ showToast('Feil ved lasting av notater', true); container.innerHTML=''; }
+  } catch { showToast('Feil ved lasting', true); }
 }
 
-// Slett notat
-// - sender DELETE til /api/notes/:id
-// - oppdaterer visningen etterpå
-async function deleteNote(id){
-  await fetch('/api/notes/'+id, { method: 'DELETE' });
+async function deleteNote(id) {
+  await fetch('/api/notes/' + id, { method: 'DELETE' });
   loadNotes();
 }
 
-// Hent og vis todo-lister fra serveren
-// - lager HTML for hver liste og oppgave
-// - bind event for å toggle oppgave-status
-async function loadTodos(){
-  const container = document.getElementById('todos-container');
-  // Vis loading-indikator for todo-lister
-  container.innerHTML = '<div class="loading"><div class="spinner"></div> Laster todo-lister…</div>';
-  try{
+// henter todo-lister og viser dem
+async function loadTodos() {
+  const c = document.getElementById('todos-container');
+  c.innerHTML = '<div class="loading"><div class="spinner"></div> Laster todo-lister...</div>';
+  try {
     const lists = await api('/todos');
-    if(!lists.length){ container.innerHTML = '<div class="empty-state"><span class="big">Ingen lister</span>Lag en liste for å komme i gang.</div>'; return; }
-    container.innerHTML = '';
-    for(const l of lists){
-      const el = document.createElement('article'); el.className='card';
-  const tasks = (l.tasks || []).map(t=>`<li class="${t.completed? 'done':''}" onclick="toggleTask('${l.id}','${t.id}')"><span class="task-check">${t.completed? '[x]':''}</span>${escapeHtml(t.text)}</li>`).join('');
-  el.innerHTML = `<div class="card-date">${new Date(l.createdAt).toLocaleString()}</div><h3>${escapeHtml(l.title)}</h3><ul class="task-list">${tasks}</ul><button class="delete-btn" onclick="deleteTodo('${l.id}')">Slett</button>`;
-      container.appendChild(el);
+    if (!lists.length) { c.innerHTML = '<div class="empty-state"><span class="big">Ingen lister</span>Lag en liste for å komme i gang.</div>'; return; }
+    c.innerHTML = '';
+    for (const l of lists) {
+      const el = document.createElement('article');
+      el.className = 'card';
+      const tasks = (l.tasks || []).map(t => `<li class="${t.completed ? 'done' : ''}" onclick="toggleTask('${l.id}','${t.id}')"><span class="task-check">${t.completed ? '[x]' : ''}</span>${esc(t.text)}</li>`).join('');
+      el.innerHTML = `<div class="card-date">${new Date(l.createdAt).toLocaleString()}</div><h3>${esc(l.title)}</h3><ul class="task-list">${tasks}</ul><button class="delete-btn" onclick="deleteTodo('${l.id}')">Slett</button>`;
+      c.appendChild(el);
     }
-  }catch(e){ showToast('Feil ved lasting av todo-lister', true); container.innerHTML=''; }
+  } catch { showToast('Feil ved lasting', true); }
 }
 
-// Slett en todo-liste
-async function deleteTodo(id){ await fetch('/api/todos/'+id,{method:'DELETE'}); loadTodos(); }
-// Toggle en oppgave sin ferdig-status (PATCH)
-async function toggleTask(listId, taskId){ await fetch(`/api/todos/${listId}/tasks/${taskId}`,{method:'PATCH'}); loadTodos(); }
+async function deleteTodo(id) { await fetch('/api/todos/' + id, { method: 'DELETE' }); loadTodos(); }
 
-// Opprett nytt notat
-// - validerer at tittel og innhold finnes
-// - sender POST til /api/notes
-// - tømmer skjema og laster notater etterpå
-document.getElementById('create-note')?.addEventListener('click', async ()=>{
+// krysser av eller fjerner avkryssing
+async function toggleTask(listId, taskId) { await fetch(`/api/todos/${listId}/tasks/${taskId}`, { method: 'PATCH' }); loadTodos(); }
+
+// lagrer nytt notat
+document.getElementById('create-note')?.addEventListener('click', async () => {
   const title = document.getElementById('note-title').value.trim();
   const content = document.getElementById('note-content').value.trim();
-  if(!title||!content){ showToast('Tittel og innhold kreves', true); return; }
-  await fetch('/api/notes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,content})});
-  document.getElementById('note-title').value=''; document.getElementById('note-content').value=''; showToast('Notat lagret'); showView('notes-list'); loadNotes();
+  if (!title || !content) { showToast('Tittel og innhold kreves', true); return; }
+  await fetch('/api/notes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, content }) });
+  document.getElementById('note-title').value = '';
+  document.getElementById('note-content').value = '';
+  showToast('Notat lagret'); showView('notes-list'); loadNotes();
 });
 
+// oppgaver som ikke er lagret ennå
 let draftTasks = [];
-document.getElementById('add-task')?.addEventListener('click', ()=>{
-  const input = document.getElementById('task-input'); const txt = input.value.trim(); if(!txt) return; draftTasks.push({text:txt}); input.value=''; renderDraft();
-});
-// Oppdaterer utkast-listen i UI. Ingen nettkall her.
-function renderDraft(){ const ul = document.getElementById('draft'); ul.innerHTML = draftTasks.map((t,i)=>`<li>${escapeHtml(t.text)} <button onclick="removeDraft(${i})">Fjern</button></li>`).join(''); }
-window.removeDraft = (i)=>{ draftTasks.splice(i,1); renderDraft(); };
 
-// Opprett todo-liste fra utkast
-document.getElementById('create-todo')?.addEventListener('click', async ()=>{
-  const title = document.getElementById('todo-title').value.trim(); if(!title){ showToast('Tittel kreves', true); return; }
-  await fetch('/api/todos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,tasks:draftTasks})});
-  document.getElementById('todo-title').value=''; draftTasks=[]; renderDraft(); showToast('Liste lagret'); showView('todos-list'); loadTodos();
+document.getElementById('add-task')?.addEventListener('click', () => {
+  const input = document.getElementById('task-input');
+  const txt = input.value.trim();
+  if (!txt) return;
+  draftTasks.push({ text: txt }); input.value = ''; renderDraft();
 });
 
-// Vis en kort toast-melding i skjermens bunn
-function showToast(msg, isError){ const t = document.getElementById('toast'); t.textContent = msg; t.className = isError? 'error show':'show'; setTimeout(()=>t.className='',2500); }
+// tegner opp utkastlisten på nytt
+function renderDraft() {
+  document.getElementById('draft').innerHTML = draftTasks.map((t, i) =>
+    `<li>${esc(t.text)} <button onclick="removeDraft(${i})">Fjern</button></li>`
+  ).join('');
+}
 
-// Enkel XSS-vern: erstatt farlige tegn før innsetting i DOM
-// Brukes hver gang vi setter bruker-innhold inn i HTML
-function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;', "'":"&#39;" })[c]); }
+window.removeDraft = (i) => { draftTasks.splice(i, 1); renderDraft(); };
+
+// lagrer ny todo-liste
+document.getElementById('create-todo')?.addEventListener('click', async () => {
+  const title = document.getElementById('todo-title').value.trim();
+  if (!title) { showToast('Tittel kreves', true); return; }
+  await fetch('/api/todos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, tasks: draftTasks }) });
+  document.getElementById('todo-title').value = ''; draftTasks = []; renderDraft();
+  showToast('Liste lagret'); showView('todos-list'); loadTodos();
+});
+
+// viser melding nede til høyre, rød ved feil
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = isError ? 'error show' : 'show';
+  setTimeout(() => t.className = '', 2500);
+}
+
+// gjør om spesialtegn så de ikke tolkes som HTML
+function esc(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
 
 loadNotes(); loadTodos();
 
-function initNav(){ document.getElementById('nav-notes-list').addEventListener('click', ()=>showView('notes-list'));
-  document.getElementById('nav-todos-list').addEventListener('click', ()=>showView('todos-list'));
-  document.getElementById('nav-new-note').addEventListener('click', ()=>showView('new-note'));
-  document.getElementById('nav-new-todo').addEventListener('click', ()=>showView('new-todo'));
+function initNav() {
+  document.getElementById('nav-notes-list').addEventListener('click', () => showView('notes-list'));
+  document.getElementById('nav-todos-list').addEventListener('click', () => showView('todos-list'));
+  document.getElementById('nav-new-note').addEventListener('click', () => showView('new-note'));
+  document.getElementById('nav-new-todo').addEventListener('click', () => showView('new-todo'));
 }
 initNav();
 
 </script>
-
 </body>
 </html>
