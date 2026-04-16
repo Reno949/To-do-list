@@ -14,7 +14,7 @@ const app = express();
 const PORT = 3000;
 const DB_PATH = path.join(__dirname, "db.json");
 
-app.use(cors());
+app.use(cors());  
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
@@ -44,7 +44,7 @@ function generateId() {
 // --- Notater (endpoints) ---
 app.get("/api/notes", (req, res) => {
   const db = readDB();
-  res.json(db.notes);
+  res.json(db.notes); 
 });
 
 app.get("/api/notes/:id", (req, res) => {
